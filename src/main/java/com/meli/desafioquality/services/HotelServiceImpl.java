@@ -1,46 +1,68 @@
 package com.meli.desafioquality.services;
 
 import com.meli.desafioquality.dtos.HotelDTO;
+import com.meli.desafioquality.dtos.HotelDataDTO;
+import com.meli.desafioquality.dtos.RequestBookingDTO;
+import com.meli.desafioquality.dtos.ResponseBookingDTO;
+import com.meli.desafioquality.exception.ApiException;
 import com.meli.desafioquality.repositories.HotelRepository;
+import com.meli.desafioquality.util.DataUtil;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HotelServiceImpl implements HotelService{
 
     private HotelRepository hotelRepository;
 
+    private DataUtil dataUtil = new DataUtil();
+
     public HotelServiceImpl(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
     }
 
     @Override
-    public List<HotelDTO> getHotels(HashMap<String,String> params) throws IOException {
-        String dateFrom = "";
-        String dateTo = "";
-        String destination = "";
-        List<HotelDTO> listHotels= new ArrayList<>();
-        if(params!=null){
+    public HotelDataDTO getHotels(Map<String,String> params) throws Exception {
+        String[] avalibleParams = {"dateFrom", "dateTo", "destination"};
+        HotelDataDTO dataDTO= new HotelDataDTO();
+        if(params.size()>0){
             for(Map.Entry<String,String> entry: params.entrySet()){
-                if(entry.getKey().equals("dateFrom")){
-                    dateFrom=entry.getValue();
+                if(entry.getKey().equals(avalibleParams[0])){
+                    avalibleParams[0]=entry.getValue();
                 }
-                if(entry.getKey().equals("dateTo")){
-                    dateTo=entry.getValue();
+                if(entry.getKey().equals(avalibleParams[1])){
+                    avalibleParams[1]=entry.getValue();
                 }
-                if(entry.getKey().equals("destination")){
-                    destination = entry.getValue();
+                if(entry.getKey().equals(avalibleParams[2])){
+                    avalibleParams[2] = entry.getValue();
                 }
             }
-            listHotels = hotelRepository.getFilterHotelRangeDate(dateFrom,dateTo,destination);
+            dataDTO = hotelRepository.getFilterHotelRangeDate(avalibleParams[0],avalibleParams[1],avalibleParams[2]);
         }else {
-            listHotels = hotelRepository.getHotels();
+            dataDTO = hotelRepository.getHotels();
         }
-        return listHotels;
+        return dataDTO;
+    }
+
+    @Override
+    public ResponseBookingDTO createBooking(RequestBookingDTO request) throws Exception {
+        HotelDataDTO dataDTO = hotelRepository.getHotels();
+        ResponseBookingDTO response = new ResponseBookingDTO();
+        List<HotelDTO> listFilter = new ArrayList<>();
+        listFilter =dataDTO.getHotels().stream().filter(listFilters -> listFilters.getCity().toLowerCase().contains(request.getBooking().getDestination().toLowerCase()))
+                .collect(Collectors.toList());
+        if(listFilter.size()==0) throw new ApiException("El destino no esta registrado");
+        boolean validEmail = dataUtil.validateFormatEmail(request.getUserName());
+        Date dateFrom= dataUtil.dateFormat(request.getBooking().getDateFrom());
+        Date dateTo= dataUtil.dateFormat(request.getBooking().getDateTo());
+        for(HotelDTO hotelDTO: dataDTO.getHotels()){
+            if(dataUtil.ischeckBetween(dateFrom,dateTo,hotelDTO)){
+                response =hotelRepository.createBooking(request,hotelDTO);
+            }
+        }
+        return response;
     }
 }

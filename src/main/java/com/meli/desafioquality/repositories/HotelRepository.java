@@ -1,12 +1,18 @@
 package com.meli.desafioquality.repositories;
 
 import com.meli.desafioquality.dtos.HotelDTO;
+import com.meli.desafioquality.dtos.HotelDataDTO;
+import com.meli.desafioquality.dtos.RequestBookingDTO;
+import com.meli.desafioquality.dtos.ResponseBookingDTO;
+import com.meli.desafioquality.exception.ApiException;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface HotelRepository {
 
-    List<HotelDTO> getHotels() throws IOException;
-    List<HotelDTO> getFilterHotelRangeDate(String dateFrom, String dateTo, String destination) throws IOException;
+    HotelDataDTO getHotels() throws IOException;
+    HotelDataDTO getFilterHotelRangeDate(String dateEntry, String dateFinal, String destination) throws Exception;
+    ResponseBookingDTO createBooking(RequestBookingDTO request, HotelDTO listData) throws IOException, ApiException;
+
 }

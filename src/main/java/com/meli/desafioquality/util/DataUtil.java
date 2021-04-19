@@ -2,6 +2,7 @@ package com.meli.desafioquality.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.meli.desafioquality.dtos.FlightDataDTO;
 import com.meli.desafioquality.dtos.HotelDTO;
 import com.meli.desafioquality.dtos.HotelDataDTO;
 import com.meli.desafioquality.dtos.RequestBookingDTO;
@@ -25,6 +26,7 @@ public class DataUtil {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static HotelDataDTO data;
+    private static FlightDataDTO flightDataDTO;
     private float total=0;
     private float amount=0;
     private float interest=0;
@@ -62,48 +64,42 @@ public class DataUtil {
         }
         return date;
     }
-    public Map<String,Float> calculateTotal(HotelDTO listHotels, RequestBookingDTO request){
+    public Map<String,Float> calculateTotal(String typeCard, int dues, float price,int numberPeople) throws ApiException {
         Map<String,Float> params = new HashMap<>();
-        if(request.getBooking().getPaymentMethod().getType().equals(ValidateConfiguration.TYPE_CREDIT.getProperty())){
-            if(request.getBooking().getPaymentMethod().getDues()>3){
-                total +=(listHotels.getNightPrice() * request.getBooking().getPeopleAmount())
-                        + (listHotels.getNightPrice() * request.getBooking().getPeopleAmount()) * 0.10;
-                params.put("amount",total);
-                params.put("total",total);
-            }else{
-                total +=(listHotels.getNightPrice() * request.getBooking().getPeopleAmount())
-                        + (listHotels.getNightPrice() * request.getBooking().getPeopleAmount()) * 0.05;
-                params.put("amount",total);
-                params.put("total",total);
-            }
-        }else{
-            total +=(listHotels.getNightPrice() * request.getBooking().getPeopleAmount());
-            params.put("amount",total);
-            params.put("total",total);
+        switch (typeCard){
+            case "CREDIT":
+                if(dues<=3){
+                    total= (float) ((price*numberPeople) + (price *0.05));
+                    amount =(price*numberPeople);
+                    interest = (float) (5.0);
+                    params.put("total",total);
+                    params.put("amount",amount);
+                    params.put("interest",interest);
+                }else{
+                    total= (float) ((price*numberPeople) + (price *0.10));
+                    amount =(price*numberPeople);
+                    interest = (float) (10.0);
+                    params.put("total",total);
+                    params.put("amount",amount);
+                    params.put("interest",interest);
+                }
+                break;
+            case "DEBIT":
+                if(dues==1){
+                    total= (price*numberPeople);
+                    amount =(price*numberPeople);
+                    interest = (float) (0);
+                    params.put("total",total);
+                    params.put("amount",amount);
+                    params.put("interest",interest);
+                }else {
+                    throw new ApiException(ValidateConfiguration.TYPE_CREDIT.getProperty());
+                }
+                break;
         }
         return params;
     }
-    public Map<String,Float> calculateTotal2(String typeCard, int dues, float price,int numberPeople){
-        Map<String,Float> params = new HashMap<>();
-        if(typeCard.equals(ValidateConfiguration.TYPE_CREDIT.getProperty())){
-            if(dues<=3){
-                total= (float) ((price*numberPeople) * 0.05);
-                amount =(price*numberPeople);
-                interest = (float) (0.05);
-                params.put("total",total);
-                params.put("amount",amount);
-                params.put("interest",interest);
-            }else{
-                total= (float) ((price*numberPeople) * 0.10);
-                amount =(price*numberPeople);
-                interest = (float) (0.10);
-                params.put("total",total);
-                params.put("amount",amount);
-                params.put("interest",interest);
-            }
-        }
-        return params;
-    }
+
     public boolean validatePeople(int numberPeople, int peopleAmount) throws ApiException {
         boolean result=false;
         if(numberPeople==peopleAmount){
@@ -118,9 +114,16 @@ public class DataUtil {
         Pattern regex = Pattern.compile("\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b");
         result=regex.matcher(email).matches() ? true : false;
         if(!result){
-            throw new ApiException("Email no valido");
+            throw new ApiException(ValidateConfiguration.EMAIL_NOT_VALID.getProperty());
         }
         return result;
+    }
+    //read json and load flight list
+    public FlightDataDTO loadFlight() throws IOException {
+        flightDataDTO = objectMapper.readValue(new File(ValidateConfiguration.PATH_FLIGHT.getProperty()),
+                new TypeReference<>() {
+                });
+        return flightDataDTO;
     }
 
     public float getTotal() {

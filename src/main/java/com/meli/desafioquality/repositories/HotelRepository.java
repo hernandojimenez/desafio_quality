@@ -7,12 +7,13 @@ import com.meli.desafioquality.dtos.ResponseBookingDTO;
 import com.meli.desafioquality.exception.ApiException;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public interface HotelRepository {
 
     HotelDataDTO getHotels() throws IOException;
-    HotelDataDTO getFilterHotelRangeDate(String dateEntry, String dateFinal, String destination) throws Exception;
+    HotelDataDTO getFilterHotelRangeDate(Date dateFrom, Date dateTo, String destination) throws Exception;
     ResponseBookingDTO createBooking(RequestBookingDTO request, HotelDTO listData) throws IOException, ApiException;
 
 }

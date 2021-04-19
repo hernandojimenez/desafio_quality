@@ -28,12 +28,10 @@ public class HotelRepositoryImpl implements HotelRepository{
     }
 
     @Override
-    public HotelDataDTO getFilterHotelRangeDate(String dateEntry, String dateFinal, String destination) throws Exception {
+    public HotelDataDTO getFilterHotelRangeDate(Date dateFrom, Date dateTo, String destination) throws Exception {
         List<HotelDTO> listFilter = new ArrayList<>();
         HotelDataDTO hotels = dataUtil.loadHotels();
         HotelDataDTO data = new HotelDataDTO();
-        Date dateFrom= dataUtil.dateFormat(dateEntry);
-        Date dateTo= dataUtil.dateFormat(dateFinal);
         for(HotelDTO list: hotels.getHotels()){
             if(dataUtil.ischeckBetween(dateFrom,dateTo,list)){
                 listFilter.add(list);
@@ -53,7 +51,7 @@ public class HotelRepositoryImpl implements HotelRepository{
                 for(int i=0; i<list.size(); i++){
                     if(!list.get(i).isReserved()){
                         listData.setReserved(true);
-                        params = dataUtil.calculateTotal2(request.getBooking().getPaymentMethod().getType(),
+                        params = dataUtil.calculateTotal(request.getBooking().getPaymentMethod().getType(),
                                 request.getBooking().getPaymentMethod().getDues(),listData.getNightPrice(),request.getBooking().getPeople().size());
                         if(params.size()>0){
                             total = params.get("total");

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.desafioquality.dtos.HotelDTO;
 import com.meli.desafioquality.dtos.HotelDataDTO;
+import com.meli.desafioquality.dtos.RequestBookingDTO;
+import com.meli.desafioquality.dtos.ResponseBookingDTO;
 import com.meli.desafioquality.services.HotelService;
 import com.meli.desafioquality.util.ValidateConfigurationTest;
 import org.junit.jupiter.api.Assertions;
@@ -56,6 +58,17 @@ public class HotelControllerTest {
         when(hotelService.getHotels(any())).thenReturn(list);
         Assertions.assertEquals(hotelController.getHotels(params).getBody(),list);
     }
-
+    @Test
+    public void createBookingTest_OK() throws Exception {
+        RequestBookingDTO request= objectMapper.readValue(new File(ValidateConfigurationTest.PATH_REQUEST.getProperty()),
+                new TypeReference<>() {
+                });
+        ResponseBookingDTO response =objectMapper.readValue(new File(ValidateConfigurationTest.PATH_RESPONSE.getProperty()),
+                new TypeReference<>() {
+                });
+        ResponseBookingDTO responseMock = new ResponseBookingDTO();
+        when(hotelService.createBooking(request)).thenReturn(response);
+        Assertions.assertEquals(response,hotelService.createBooking(request));
+    }
 
 }

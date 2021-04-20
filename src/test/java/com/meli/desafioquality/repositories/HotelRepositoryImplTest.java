@@ -8,7 +8,6 @@ import com.meli.desafioquality.dtos.RequestBookingDTO;
 import com.meli.desafioquality.dtos.ResponseBookingDTO;
 import com.meli.desafioquality.exception.ApiException;
 import com.meli.desafioquality.util.DataUtil;
-import com.meli.desafioquality.util.ValidateConfiguration;
 import com.meli.desafioquality.util.ValidateConfigurationTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

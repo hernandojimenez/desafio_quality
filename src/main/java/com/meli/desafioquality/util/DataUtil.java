@@ -2,10 +2,7 @@ package com.meli.desafioquality.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meli.desafioquality.dtos.FlightDataDTO;
-import com.meli.desafioquality.dtos.HotelDTO;
-import com.meli.desafioquality.dtos.HotelDataDTO;
-import com.meli.desafioquality.dtos.RequestBookingDTO;
+import com.meli.desafioquality.dtos.*;
 import com.meli.desafioquality.exception.ApiException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,27 +37,24 @@ public class DataUtil {
         return data;
     }
     //validate if data exists between a date range
-    public boolean ischeckBetween(Date dateEntry, Date dateFinal, HotelDTO listData) throws ParseException, ApiException {
+    public boolean ischeckBetween(String dateFrom, String dateTo, Date dateEntry, Date dateFinal) throws ParseException, ApiException {
         boolean result = false;
 
             if(dateEntry.compareTo(dateFinal)>0){
                 throw new ApiException(ValidateConfiguration.LESS_DATE.getProperty());
             }else{
-                result = dateFormat(listData.getDateFrom()).compareTo(dateEntry) >=0
-                        && dateFormat(listData.getDateTo()).compareTo(dateFinal) <=0;
+                result = dateFormat(dateFrom).compareTo(dateEntry) >=0
+                        && dateFormat(dateTo).compareTo(dateFinal) <=0;
             }
         return result;
     }
-    public Date dateFormat(String stringDate) throws ParseException, ApiException {
-        boolean value=false;
-        String regex = "^[0-3]{1}[0-9]{1}/[0-3]{1}[0-9]{1}/[1-9]{1}[0-9]{3}$";
-        value = Pattern.matches(regex, stringDate);
-        Date date = new Date();
-        if(value){
+    public Date dateFormat(String stringDate){
+        Date date = null;
+        try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); //15/04/2021
             date = dateFormat.parse(stringDate);
-        }else{
-            throw new ApiException(ValidateConfiguration.DATE_FORMAT.getProperty());
+        }catch (ParseException e){
+            e.printStackTrace();
         }
         return date;
     }
@@ -109,11 +103,16 @@ public class DataUtil {
         }
         return result;
     }
-    public boolean validateFormatEmail(String email) throws ApiException {
+    public boolean validateFormatEmail(String email, List<PeopleDTO> peoples) throws ApiException {
         boolean result=false;
         Pattern regex = Pattern.compile("\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b");
         result=regex.matcher(email).matches() ? true : false;
-        if(!result){
+        if(result){
+            for(PeopleDTO people: peoples){
+                result = regex.matcher(people.getMail()).matches() ? true : false;
+                if(!result) throw new ApiException(ValidateConfiguration.EMAIL_NOT_VALID.getProperty());
+            }
+        }else {
             throw new ApiException(ValidateConfiguration.EMAIL_NOT_VALID.getProperty());
         }
         return result;

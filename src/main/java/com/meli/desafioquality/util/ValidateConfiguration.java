@@ -8,6 +8,7 @@ public enum ValidateConfiguration {
     PATH_REQUEST("src/main/resources/requestbooking.json"),
     STATUS_ERROR("RESPONSE SERVICE STATUS [%s]"),
     MESSAGE_ERROR("THE ROOM IS NOT AVAILABLE"),
+    MESSAGE_ERROR_FLIGHT("THE SEAT IS NOT AVAILABLE"),
     TYPE_CREDIT("It has been\n" +
             "entered an amount of installments\n" +
             "different from 1."),
@@ -24,7 +25,7 @@ public enum ValidateConfiguration {
     private String property;
 
     ValidateConfiguration(String property) {
-        this.property=property;
+        this.property = property;
     }
 
     public String getProperty() {

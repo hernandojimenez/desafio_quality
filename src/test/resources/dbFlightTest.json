@@ -1,0 +1,126 @@
+{
+  "flight": [
+    {
+      "flightNumber": "BAPI-1235",
+      "origin": "Buenos Aires",
+      "destination": "Puerto Iguazú",
+      "seatType": "Economy",
+      "peoplePrice": 6500.0,
+      "dateFrom": "10/02/2021",
+      "dateTo": "15/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "PIBA-1420",
+      "origin": "Puerto Iguazú",
+      "destination": "Bogotá",
+      "seatType": "Business",
+      "peoplePrice": 432000.0,
+      "dateFrom": "10/02/2021",
+      "dateTo": "20/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "PIBA-1420",
+      "origin": "Puerto Iguazú",
+      "destination": "Bogotá",
+      "seatType": "Economy",
+      "peoplePrice": 25735.0,
+      "dateFrom": "10/02/2021",
+      "dateTo": "21/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "BATU-5536",
+      "origin": "Buenos Aires",
+      "destination": "Tucumán",
+      "seatType": "Economy",
+      "peoplePrice": 7320.0,
+      "dateFrom": "10/02/2021",
+      "dateTo": "17/02/2021",
+      "reserved": false
+    },
+
+    {
+      "flightNumber": "TUPI-3369",
+      "origin": "Tucumán",
+      "destination": "Puerto Iguazú",
+      "seatType": "Business",
+      "peoplePrice": 12530.0,
+      "dateFrom": "12/02/2021",
+      "dateTo": "23/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "TUPI-3369",
+      "origin": "Tucumán",
+      "destination": "Puerto Iguazú",
+      "seatType": "Economy",
+      "peoplePrice": 5400.0,
+      "dateFrom": "02/01/2021",
+      "dateTo": "16/01/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "BOCA-4213",
+      "origin": "Bogotá",
+      "destination": "Cartagena",
+      "seatType": "Economy",
+      "peoplePrice": 8000.0,
+      "dateFrom": "23/01/2021",
+      "dateTo": "05/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "CAME-0321",
+      "origin": "Cartagena",
+      "destination": "Medellín",
+      "seatType": "Economy",
+      "peoplePrice": 7800.0,
+      "dateFrom": "23/01/2021",
+      "dateTo": "31/01/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "BOBA-6567",
+      "origin": "Bogotá",
+      "destination": "Buenos Aires",
+      "seatType": "Business",
+      "peoplePrice": 57000.0,
+      "dateFrom": "15/02/2021",
+      "dateTo": "28/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "BOBA-6567",
+      "origin": "Bogotá",
+      "destination": "Buenos Aires",
+      "seatType": "Economy",
+      "peoplePrice": 39860.0,
+      "dateFrom": "01/03/2021",
+      "dateTo": "14/03/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "BOME-4442",
+      "origin": "Bogotá",
+      "destination": "Medellín",
+      "seatType": "Economy",
+      "peoplePrice": 41640.0,
+      "dateFrom": "10/02/2021",
+      "dateTo": "24/02/2021",
+      "reserved": false
+    },
+    {
+      "flightNumber": "MEPI-9986",
+      "origin": "Medellín",
+      "destination": "Puerto Iguazú",
+      "seatType": "Business",
+      "peoplePrice": 11000.0,
+      "dateFrom": "17/04/2021",
+      "dateTo": "05/05/2021",
+      "reserved": false
+    }
+
+  ]
+}

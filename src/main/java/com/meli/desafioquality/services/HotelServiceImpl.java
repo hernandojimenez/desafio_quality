@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class HotelServiceImpl implements HotelService{
+public class HotelServiceImpl implements HotelService {
 
     private HotelRepository hotelRepository;
 
@@ -26,43 +26,43 @@ public class HotelServiceImpl implements HotelService{
     }
 
     @Override
-    public HotelDataDTO getHotels(Map<String,String> params) throws Exception {
-        HotelDataDTO dataDTO= hotelRepository.getHotels();
-        if(params.size()>0){
-            Date dateFrom=dataUtil.dateFormat(params.get("dateFrom"));
-            Date dateTo=dataUtil.dateFormat(params.get("dateTo"));
-            List<HotelDTO> listFilter =filterDestination(params.get("destination"),dataDTO.getHotels());
-            if(listFilter.size()==0) throw new ApiException(ValidateConfiguration.DESTINATION_NOT_FOUND.getProperty());
-            dataDTO = hotelRepository.getFilterHotelRangeDate(dateFrom,dateTo,params.get("destination"));
+    public HotelDataDTO getHotels(Map<String, String> params) throws Exception {
+        HotelDataDTO dataDTO = hotelRepository.getHotels();
+        if (params.size() > 0) {
+            Date dateFrom = dataUtil.dateFormat(params.get("dateFrom"));
+            if (dateFrom == null) throw new ApiException(ValidateConfiguration.DATE_FORMAT.getProperty());
+            Date dateTo = dataUtil.dateFormat(params.get("dateTo"));
+            if (dateTo == null) throw new ApiException(ValidateConfiguration.DATE_FORMAT.getProperty());
+            dataDTO = hotelRepository.getFilterHotelRangeDate(dateFrom, dateTo, params.get("destination"));
+            List<HotelDTO> listFilter = filterDestination(params.get("destination"), dataDTO.getHotels());
+            if (listFilter.size() == 0)
+                throw new ApiException(ValidateConfiguration.DESTINATION_NOT_FOUND.getProperty());
+            dataDTO.setHotels(listFilter);
         }
         return dataDTO;
     }
-    public List<HotelDTO> filterDestination(String destination, List<HotelDTO> listHotels){
+
+    public List<HotelDTO> filterDestination(String destination, List<HotelDTO> listHotels) {
         List<HotelDTO> listFilter = new ArrayList<>();
-        listFilter =listHotels.stream().filter(listFilters -> listFilters.getCity().toLowerCase().contains(destination.toLowerCase()))
+        listFilter = listHotels.stream().filter(listFilters -> listFilters.getCity().toLowerCase().contains(destination.toLowerCase()))
                 .collect(Collectors.toList());
         return listFilter;
     }
+
     public boolean validateNumberPeople(int numberPeople, String roomType) throws ApiException {
-        boolean result=false;
+        boolean result = false;
         switch (roomType) {
             case "Single":
-                if (numberPeople == 1)
-                    result = true;
-                else
-                    throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
+                if (numberPeople == 1) result = true;
+                else throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
                 break;
             case "Doble":
-                if (numberPeople == 2)
-                    result = true;
-                else
-                    throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
+                if (numberPeople == 2) result = true;
+                else throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
                 break;
             case "Triple":
-                if (numberPeople >= 3)
-                    result = true;
-                else
-                    throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
+                if (numberPeople >= 3) result = true;
+                else throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
                 break;
             default:
                 throw new ApiException(ValidateConfiguration.ROOM_TYPE_NOT_VALID.getProperty());
@@ -74,15 +74,17 @@ public class HotelServiceImpl implements HotelService{
     public ResponseBookingDTO createBooking(RequestBookingDTO request) throws Exception {
         HotelDataDTO dataDTO = hotelRepository.getHotels();
         ResponseBookingDTO response = new ResponseBookingDTO();
-        List<HotelDTO> listFilter =filterDestination(request.getBooking().getDestination(),dataDTO.getHotels());
-        if(listFilter.size()==0) throw new ApiException(ValidateConfiguration.DESTINATION_NOT_FOUND.getProperty());
-        boolean validateNumberPerson= validateNumberPeople(request.getBooking().getPeople().size(),request.getBooking().getRoomType());
-        boolean validEmail = dataUtil.validateFormatEmail(request.getUserName());
-        Date dateFrom= dataUtil.dateFormat(request.getBooking().getDateFrom());
-        Date dateTo= dataUtil.dateFormat(request.getBooking().getDateTo());
-        for(HotelDTO hotelDTO: dataDTO.getHotels()){
-            if(dataUtil.ischeckBetween(dateFrom,dateTo,hotelDTO)){
-                response =hotelRepository.createBooking(request,hotelDTO);
+        List<HotelDTO> listFilter = filterDestination(request.getBooking().getDestination(), dataDTO.getHotels());
+        if (listFilter.size() == 0) throw new ApiException(ValidateConfiguration.DESTINATION_NOT_FOUND.getProperty());
+        boolean validateNumberPerson = validateNumberPeople(request.getBooking().getPeople().size(), request.getBooking().getRoomType());
+        boolean validEmail = dataUtil.validateFormatEmail(request.getUserName(), request.getBooking().getPeople());
+        Date dateFrom = dataUtil.dateFormat(request.getBooking().getDateFrom());
+        if (dateFrom == null) throw new ApiException(ValidateConfiguration.DATE_FORMAT.getProperty());
+        Date dateTo = dataUtil.dateFormat(request.getBooking().getDateTo());
+        if (dateTo == null) throw new ApiException(ValidateConfiguration.DATE_FORMAT.getProperty());
+        for (HotelDTO hotelDTO : dataDTO.getHotels()) {
+            if (dataUtil.ischeckBetween(hotelDTO.getDateFrom(), hotelDTO.getDateTo(), dateFrom, dateTo)) {
+                response = hotelRepository.createBooking(request, hotelDTO);
             }
         }
         return response;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.desafioquality.dtos.HotelDTO;
 import com.meli.desafioquality.dtos.HotelDataDTO;
+import com.meli.desafioquality.dtos.RequestBookingDTO;
 import com.meli.desafioquality.exception.ApiException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ public class DataUtilTest {
         Date dateFrom= dataUtil.dateFormat("10/02/2021");
         Date dateTo= dataUtil.dateFormat("20/03/2021");
         for(HotelDTO hotelDTO: list.getHotels()){
-            result = dataUtil.ischeckBetween(dateFrom,dateTo,hotelDTO);
+            result = dataUtil.ischeckBetween(hotelDTO.getDateFrom(),hotelDTO.getDateTo(),dateFrom,dateTo);
         }
         Assertions.assertEquals(false,result);
     }
@@ -94,12 +95,15 @@ public class DataUtilTest {
         Assertions.assertEquals(paramsIn,paramsOut);
     }
     @Test
-    public void validateFormatEmailTest() throws ApiException {
+    public void validateFormatEmailTest() throws ApiException, IOException {
+        RequestBookingDTO request= objectMapper.readValue(new File(ValidateConfigurationTest.PATH_REQUEST.getProperty()),
+                new TypeReference<>() {
+                });
         String email="seba_gonzalez@unmail.com";
         Pattern regex = Pattern.compile("\\b[\\w.%-]+@[-.\\w]+\\.[A-Za-z]{2,4}\\b");
         boolean resultMock=regex.matcher(email).matches() ? true : false;
 
-        boolean result=dataUtil.validateFormatEmail(email);
+        boolean result=dataUtil.validateFormatEmail(email,request.getBooking().getPeople());
         Assertions.assertEquals(resultMock,result);
     }
 
